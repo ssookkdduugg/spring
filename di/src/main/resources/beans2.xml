@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+   https://www.springframework.org/schema/beans/spring-beans.xsd">
+   
+   		<!-- <value>out.txt</value>를 써서 out.txt라는 파일이 생김  -->
+    	<bean id="outputter" class="com.kosta.di.sample2.FileOutputter">
+ 		<constructor-arg index="0">
+ 			<value>out.txt</value>
+ 		</constructor-arg> 	
+ 	</bean>
+ 	
+   <!-- 세터함수를 호출하여 빈에 데이터를 넣어주는것, property는 변수 -->
+   <bean id="messageBean" class="com.kosta.di.sample2.MessageBeanImpl">
+      <property name="name"><value>홍길동아</value></property>
+      <property name="greeting"><value>반가워</value></property>
+      <property name="outputter"><ref bean="outputter"></ref></property>
+       	<!-- 위에 bean id = "outputter"랑 ref bean="outputter"랑 이름 같아야함 -->
+   </bean>
+</beans>

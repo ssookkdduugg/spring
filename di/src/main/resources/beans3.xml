@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+   https://www.springframework.org/schema/beans/spring-beans.xsd">
+   
+   <bean id="department" class="com.kosta.di.sample3.Department">
+ 	<property name="id"><value>1</value></property>
+      <property name="name"><value>꽉진주먹과</value></property>
+      <property name="location"><value>망원동</value></property>
+ 	</bean>
+   
+    <bean id="employee" class="com.kosta.di.sample3.EmployeeImpl">
+     <constructor-arg index="0">
+     	<value>4</value>
+     </constructor-arg>
+      <constructor-arg index="1">
+     	<value>유재석</value>
+     </constructor-arg>
+     <property name="department"><ref bean="department"></ref></property>
+     
+   </bean>
+</beans>
