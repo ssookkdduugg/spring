@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.boardlike">
+	<select id="selectBoardLike" parameterType="hashmap" resultType="Integer">
+		<![CDATA[
+		select * from boardlike where member_id=#{id} and board_num=#{num}
+	]]>
+	</select>
+	
+	
+	<insert id="insertBoardLike" parameterType="hashmap" useGeneratedKeys="true" keyProperty="num">
+	<![CDATA[
+		insert into boardlike (member_id, board_num) values (#{id},#{num})
+	]]>
+	</insert>
+	
+	<delete id="deleteBoardLike" parameterType="hashmap"> 
+	<![CDATA[
+		delete from boardlike where member_id=#{id} and board_num=#{num}
+	]]>
+	
+	</delete>
+	<!-- 해당게시글 num에 좋아요누른 userid 두컬럼이 일치하는 한행을 삭제한다.  -->
+	
+	
+	<!-- (좋아요가 있는)게시글을 삭제하려고하면, BOARD테이블의 NUM을 참조하는 BOARDLIKE의 행이 있기 때문에, 즉 BOARDLIKE의 FK컬럼 때문에 예외가 발생한다 
+       따라서 게시글 삭제 이전에 해당 게시글의 NUM을 참조하는 BOARDLIKE 테이블의 행들을 삭제하는 처리를 먼저 수행해야한다 -->
+    <delete id="deleteBoardLikeByBoardNum" parameterType="Integer">
+       <![CDATA[
+          delete from boardlike where board_num=#{boardNum} 
+       ]]>
+    </delete>
+    <!-- 좋아요가 눌러진 게시글 삭제하려고 하면은 null이나오는데 이유는 fk 참조 문제가 있다. 
+    부모테이블 board에서 33번 게시글을 삭제하면은 자식테이블 boardlike와의 관계가 없어지기때문에 boardlike테이블은 낙동강 오리알이 되어서 
+    삭제하기 어려워지기 때문에 이를 막으려고 db에서 오류를 낸다. 
+    해결하려면? 자식테이블 (부모테이블의 33번 게시글과 일치하는) 먼저 다 지우고 그다음에 부모테이블을 삭제하면된다. 
+    그래서 deleteBoardLikeByBoardNum 을 만들어준거임. 
+    
+     -->
+	
+	
+	
+
+</mapper>

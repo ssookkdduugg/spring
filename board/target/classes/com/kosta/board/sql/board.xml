@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="mapper.board">
+	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="num">
+		<![CDATA[
+			insert into board (subject,content,writedate,fileurl,writer) values (#{subject},#{content},curdate(),#{fileurl},#{writer})
+		]]>
+	</insert>
+	
+	<select id="selectBoardList" parameterType="Integer" resultType="Board">
+		<![CDATA[
+			select * from board order by num desc
+			limit #{row},10
+		]]>
+	</select>
+	
+	<select id="selectBoardCount" resultType="Integer">
+		<![CDATA[
+			select count(*) from board
+		]]>
+	</select>
+	
+	<select id="selectBoard" parameterType="Integer" resultType="Board">
+		<![CDATA[
+			select * from board where num=#{num}
+		]]>
+	</select>
+	
+	<update id="updateBoard" parameterType="Board">
+		update board 
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="subject != null">subject=#{subject},</if>
+			<if test="content != null">content=#{content},</if>
+			<if test="fileurl != null">fileurl=#{fileurl},</if>
+		</trim> 
+		where num=#{num}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="Integer">
+		<![CDATA[
+			delete from board where num=#{num}
+		]]>	
+	</delete>
+	
+	<select id="searchBoardList" parameterType="hashmap" resultType="Board">
+		select * from board
+		where ${type} like '%${keyword}%' order by num desc
+		limit #{row},10
+	</select>
+	
+	<select id="searchBoardCount" parameterType="hashmap" resultType="Integer">
+		select count(*) from board
+		where ${type} like '%${keyword}%'
+	</select>
+	
+	<update id="updateBoardViewCount" parameterType="Integer">
+		<![CDATA[
+			update board set viewcount=viewcount+1 where num=#{num}
+		]]>	
+	</update>
+	
+	<select id="selectLikeCount" parameterType="Integer" resultType="Integer">
+		select likecount from board where num=#{num}
+	</select>
+
+	<update id="plusBoardLikeCount" parameterType="Integer">
+		<![CDATA[
+			update board set likecount=likecount+1 where num=#{num}
+		]]>	
+	</update>
+
+	<update id="minusBoardLikeCount" parameterType="Integer">
+		<![CDATA[
+			update board set likecount=likecount-1 where num=#{num}
+		]]>	
+	</update>
+	
+	<!--  useGeneratedKeys="true" keyProperty="num"쓰면, auto increment 해준다.  -->
+	<insert id="insertFile" parameterType="FileVo" useGeneratedKeys="true" keyProperty="num">
+      <![CDATA[
+         insert into file (directory,name,size,contenttype,uploaddate,data) 
+         values (#{directory},#{name},#{size},#{contenttype},curdate(),#{data})
+      ]]>
+   </insert>
+   
+
+	
+	<select id="selectFile" parameterType="Integer" resultType="FileVo">
+		<![CDATA[
+			select * from file where num=#{num}
+		]]>
+	</select>
+	
+	<delete id="deleteFile" parameterType="Integer">
+		<![CDATA[
+			delete  from file where num=#{num}
+		]]>	
+	</delete>
+	
+	
+</mapper>
