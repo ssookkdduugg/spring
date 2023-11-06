@@ -41,6 +41,36 @@ public class BoardServiceImpl implements BoardService {
        return boardDao.selectBoardList(row-1);
     
     }
+	
+	
+	@Override
+	public List<Board> boardSearchListByPage(String type, String keyword, PageInfo pageInfo) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("type", type);
+		param.put("keyword", keyword);
+		int searchCount = boardDao.searchBoardCount(param);
+		if (searchCount == 0)
+			return null;
+
+		int allPage = (int) Math.ceil((double) searchCount / 10);
+		int startPage = (pageInfo.getCurPage() - 1) / 10 * 10 + 1;
+		int endPage = Math.min(startPage + 10 - 1, allPage);
+
+		pageInfo.setAllPage(allPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+		if (pageInfo.getCurPage() > allPage)
+			pageInfo.setCurPage(allPage);
+
+		int row = (pageInfo.getCurPage() - 1) * 10 + 1;
+		param.put("row", row-1);
+		return boardDao.searchBoardList(param);
+	       
+		
+		
+	}
+	
+	
 
 	// 게시글 작성
 	@Override
@@ -108,6 +138,8 @@ public class BoardServiceImpl implements BoardService {
 	// 게시글 상세
 	@Override
 	public Board boardDetail(Integer num) throws Exception {
+		
+		boardDao.updateBoardViewCount(num); //조회수 증가 
 		return boardDao.selectBoard(num);
 	}
 
@@ -143,24 +175,26 @@ public class BoardServiceImpl implements BoardService {
 			boardDao.insertFile(fileVo);
 			Integer num = fileVo.getNum();
 			
-			// 2. 
+			// 2. upload파일에 
 			File uploadFile = new File(dir+fileVo.getNum());
 			file.transferTo(uploadFile);
 			
 			//기존 파일번호 삭제 위해 받아놓기
-			Integer deleteFileNum = null;
-			if(board.getFileurl()!=null && ! board.getFileurl().trim().equals("")) {
-				deleteFileNum = Integer.parseInt(board.getFileurl());
-			}
+//			Integer deleteFileNum = null;
+//			if(board.getFileurl()!=null && ! board.getFileurl().trim().equals("")) {
+//				deleteFileNum = Integer.parseInt(board.getFileurl());
+//			}
 			
 			
 			// //4. 파일번호를 board fileUrl에 복사 & board update
 			board.setFileurl(num+"");
 			boardDao.updateBoard(board);
 			
-			
-			
-				
+//			5. board fileUrl에 	
+//			if(deleteFileNum!==null) {
+//				boardDao.deleteFile
+//			}
+//				
 		
 		
 		
@@ -211,6 +245,8 @@ public class BoardServiceImpl implements BoardService {
 			return false;
 		}
 	}
+
+	
 
 	
 	

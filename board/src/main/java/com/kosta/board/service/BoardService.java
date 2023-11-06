@@ -17,6 +17,9 @@ public interface BoardService {
 	Board modifyBoard(Board board, MultipartFile file)throws Exception;
 	void removeBoard(Integer  num)throws Exception;
 	
+	
+	List<Board> boardSearchListByPage(String type, String keyword,  PageInfo pageInfo)throws Exception;
+	
 	//사용자가 글을 선택했는지 여부 가져오기 
 	Boolean isBoardLike(String userId, Integer boardNum) throws Exception;
 	

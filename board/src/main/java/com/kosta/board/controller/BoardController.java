@@ -1,5 +1,6 @@
 package com.kosta.board.controller;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -118,13 +119,14 @@ public class BoardController {
 	
 	
 	// 게시글 상세
-	   @RequestMapping(value="/boarddetail/{num}", method = RequestMethod.GET)
+	   @RequestMapping(value="/boarddetail/{num}/{page}", method = RequestMethod.GET)
 	   // public ModelAndView boardDetail(@RequestParam("num") Integer num) {
-	   public ModelAndView boardDetail(@PathVariable Integer num) {
+	   public ModelAndView boardDetail(@PathVariable Integer num,@PathVariable Integer page ) {
 	      ModelAndView mav = new ModelAndView();
 	      try {
 	         Board board = boardService.boardDetail(num);
 	         mav.addObject("board", board);
+	         mav.addObject("page",page);
 	         
 	         // 로그인한 유저가 좋아요 눌렀는지 여부를 글상세페이지에서 나타내줄것(빨간색 하트)
 	         Member user = (Member) session.getAttribute("user");
@@ -146,12 +148,16 @@ public class BoardController {
 	
 	
 	// 게시글 수정
-	@RequestMapping(value = "/boardmodify", method = RequestMethod.GET)
-	public ModelAndView boardModify(@RequestParam("num") Integer num) {
+	//PathVariable을 쓰게되면은 url경로가 board부터 다시 제대로 나올수있게 jsp파일에서 contextPath를쓰고
+	//RequestMapping에서 {num},{page}붙여줘야함.
+	   //request랑 다른점은 요청할때 / 를 쓰느냐 ?를 쓰느냐 차이임 상관없음 
+	@RequestMapping(value = "/boardmodify/{num}/{page}", method = RequestMethod.GET)
+	public ModelAndView boardModify(@PathVariable Integer num, @PathVariable Integer page) {
 		ModelAndView mav = new ModelAndView();
 		try {
 			Board board = boardService.boardDetail(num);
 			mav.addObject("board", board);
+			mav.addObject("page",page);
 			mav.setViewName("modifyform");
 			
 		} catch (Exception e) {
@@ -161,13 +167,18 @@ public class BoardController {
 		}
 		return mav;
 	}
+	
+	
+	
 	@RequestMapping(value="/boardmodify", method=RequestMethod.POST)
-	public ModelAndView boardModify(@ModelAttribute Board board, @RequestParam("file") MultipartFile file) {
+	public ModelAndView boardModify(@ModelAttribute Board board, @RequestParam("file") MultipartFile file, @RequestParam Integer page) {
 		ModelAndView mav = new ModelAndView();
 		try {
 			Board modifyedBoard = boardService.modifyBoard(board, file);
-			mav.addObject("board", modifyedBoard);
-			mav.setViewName("detailform");
+			//mav.addObject("board", modifyedBoard);
+			//mav.addObject("page",page);
+			//mav.setViewName("detailform");
+			mav.setViewName("redirect:/boarddetail/"+board.getNum()+"/"+page);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -208,18 +219,39 @@ public class BoardController {
 			e.printStackTrace();
 			return "false";
 		}
-		
-		
 	}
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-}
+		@RequestMapping(value= "/boardsearch", method = RequestMethod.POST)
+		   public ModelAndView boardSearch(@RequestParam("page") Integer page, @RequestParam("type") String type,
+		         @RequestParam("keyword") String keyword){
+		      
+		      ModelAndView mav = new ModelAndView();
+		      
+		      try {
+		         if(type.equals("all") || keyword==null || keyword.trim().equals("")) {
+		        	 mav.setViewName("redirect:/boardlist");
+		        	 return mav;
+		         }
+		         PageInfo pageInfo = new PageInfo();
+		         pageInfo.setCurPage(page);
+		         List<Board> boardList = boardService.boardSearchListByPage(type, keyword, pageInfo);
+		         mav.addObject("pageInfo", pageInfo);
+		         mav.addObject("boardList", boardList);
+		         mav.addObject("type",type);
+		         mav.addObject("keyword",keyword);
+		         mav.setViewName("boardlist");
+		      } catch (Exception e) {
+
+		         e.printStackTrace();
+		         mav.addObject("err", "게시글 검색 실패");
+		         mav.setViewName("error");   
+		         
+		      }    
+		      return mav;
+		      
+		   }
+
+	}
+

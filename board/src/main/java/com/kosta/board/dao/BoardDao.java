@@ -26,6 +26,8 @@ public interface BoardDao {
 	FileVo selectFile(Integer num)throws Exception;
 	void deleteFile(Integer num)throws Exception;
 	
+	
+	
 	//boardlike table
 	Integer selectBoardLike(Map<String, Object>param) throws Exception;
 	void insertBoardLike(Map<String, Object>param) throws Exception;
