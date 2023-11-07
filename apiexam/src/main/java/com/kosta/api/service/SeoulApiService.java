@@ -27,6 +27,7 @@ public class SeoulApiService { // cf. 인터페이스와 구현클래스를 만�
 		System.out.println("startIdx:" + startIdx);
 		
 		// 1. api요청을 위한 url 생성: 기본주소 + 인증키 + 데이터요청타입 + 서비스명 + 페이징시작번호 + 페이징끝번호
+		//rest형식이지만 ElecChargeService는 ParameterType ?로 넘겨야함.
 		StringBuilder urlBuilder = new StringBuilder("http://openapi.seoul.go.kr:8088");
 		urlBuilder.append("/" + URLEncoder.encode("695964515373656f37315752774d63", "UTF-8")); // URL을 구성할 한글 파라미터가 있다면 인코딩 필수
 		urlBuilder.append("/" + URLEncoder.encode("json", "UTF-8"));
