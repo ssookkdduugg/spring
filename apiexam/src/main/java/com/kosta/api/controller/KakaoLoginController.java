@@ -1,5 +1,7 @@
 package com.kosta.api.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +19,12 @@ public class KakaoLoginController {
 	@Autowired
 	private KaKaoLoginService kaKaoLoginService;
 	
-	@RequestMapping(value="/kakao",method=RequestMethod.GET)
+	@Autowired
+	private HttpSession session;
+	
+	@RequestMapping(value="/login",method=RequestMethod.GET)
 	public String kakao() {
-		return "kakaologin";
+		return "loginform";
 	}
 	
 	@RequestMapping(value="/kakaologin", method=RequestMethod.GET)
@@ -28,8 +33,8 @@ public class KakaoLoginController {
 		ModelAndView mav = new ModelAndView();
 		try {
 			UserInfo userInfo = kaKaoLoginService.kakaoLogin(code);
-			mav.addObject("userInfo",userInfo);
-			mav.setViewName("userInfo");
+			session.setAttribute("userInfo",userInfo);
+			mav.setViewName("kakaouserInfo");
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav.addObject("err","카카오 로그인 실패");

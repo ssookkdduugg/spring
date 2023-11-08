@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="mapper.user">
+<!-- 일반,네이버,카카오에따라 로그인 insert 3개  -->
+	<insert id="insertUser" parameterType="UserInfo" >
+		<![CDATA[
+			insert  into users (id,name,nickname,password,email,address,mobile,profileImage,thumbnailImage)
+			values (#{id},#{name},#{nickname},#{password},#{email},#{address},#{mobile},#{profileImage},#{thumbnailImage}); 
+		]]>
+	</insert>
+	
+	<insert id="insertUserByKakao" parameterType="UserInfo" >
+		<![CDATA[
+			insert  into users (id,nickname,email,gender,profileImage,thumbnailImage)
+			values (#{id},#{nickname},#{email},#{gender},#{profileImage},#{thumbnailImage}); 
+		]]>
+	</insert>
+	
+	<insert id="insertUserByNaver" parameterType="UserInfo" >
+		<![CDATA[
+			insert  into users (id,name,nickname,email,mobile, gender,age,birthday)
+			values (#{id},#{name},#{nickname},#{email},#{mobile},#{gender},#{age},#{birthday});
+		]]>
+	</insert>
+	
+	<select id="selectUser" parameterType="String" resultType="UserInfo">
+		<![CDATA[
+			select * from users where id=#{id}
+		]]>
+	</select>
+	
+	
+	
+	
+	<update id="updateUser" parameterType="UserInfo">
+		<![CDATA[
+			
+		]]>
+		
+	</update>
+	
+	
+	
+	
+</mapper>
